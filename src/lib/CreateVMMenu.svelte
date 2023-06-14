@@ -1,40 +1,112 @@
 <script lang="ts">
-	import { ListBox, ListBoxItem, modalStore } from '@skeletonlabs/skeleton';
+    // Props
+    /** Exposes parent props to this component. */
+    export let parent: any;
+    import { modalStore, RadioGroup, RadioItem, ListBox, ListBoxItem, SlideToggle } from '@skeletonlabs/skeleton';
 
-	// Props
-	/** Exposes parent props to this component. */
-	export let parent: any;
+    const formData = {};
 
-	// Local
-	let flavor = 'chocolate';
+    // We've created a custom submit function to pass the response and close the modal.
+    function onFormSubmit(): void {
+            if ($modalStore[0].response) $modalStore[0].response(formData);
+            modalStore.close();
+    }
 
-	// Handle Form Submission
-	function onFormSubmit(): void {
-		if ($modalStore[0].response) $modalStore[0].response(flavor);
-		modalStore.close();
-	}
+    // Base Classes
+    const cBase = 'card p-4 w-modal shadow-xl space-y-4';
+    const cHeader = 'text-2xl font-bold';
+    const cFormSection = 'border border-surface-500 p-4 space-y-4 rounded-container-token';
 
-	// Base Classes
-	const cBase = 'card p-4 w-modal shadow-xl space-y-4';
-	const cHeader = 'text-2xl font-bold';
+
+    // OS flavors
+    const os_flavors = {
+        'linux': {
+            displayName: 'Linux',
+            templates: [
+                {templateName: 'ubuntuserver-jammy', displayName: 'Ubuntu Server (Jammy)'},
+                {templateName: 'debian-bullseye', displayName: 'Debian (Bullseye)'},
+                {templateName: 'debian-buster', displayName: 'Debian (Buster)'},
+                {templateName: 'debian-stretch', displayName: 'Debian (Stretch)'},
+                {templateName: 'kali', displayName: 'Kali Linux'},
+            ]
+        },
+        'windows': {
+            displayName: 'Windows',
+            templates: [
+                {templateName: 'windows-2012', displayName: 'Windows Server 2012'},
+            ]
+        },
+        'firewall': {
+            displayName: 'Firewall',
+            templates: [],
+        },
+        'hypervisor': {
+            name: 'hypervisor',
+            displayName: 'Hypervisor',
+            templates: [],
+        },
+    };
+
+    let os_flavor = Object.entries(os_flavors)[0][0]; // Get key of first entry in the object
+    $: os_template = os_flavors[os_flavor].templates.length ? os_flavors[os_flavor].templates[0].templateName : undefined;
+
+    let automatic_networking = true;
+    let ip = '127.0.0.1/8';
+    let gateway = '127.0.0.1/8';
 </script>
 
 <!-- @component This example creates a simple form modal. -->
 
 {#if $modalStore[0]}
-	<div class="modal-example-form {cBase}">
-		<header class={cHeader}>{$modalStore[0].title ?? '(title missing)'}</header>
-		<article>{$modalStore[0].body ?? '(body missing)'}</article>
-		<ListBox class="border border-surface-500 p-4 rounded-container-token">
-			<ListBoxItem bind:group={flavor} name="chocolate" value="chocolate">Chocolate</ListBoxItem>
-			<ListBoxItem bind:group={flavor} name="vanilla" value="vanilla">Vanilla</ListBoxItem>
-			<ListBoxItem bind:group={flavor} name="strawberry" value="strawberry">Strawberry</ListBoxItem>
-			<ListBoxItem bind:group={flavor} name="peach" value="peach">Peach</ListBoxItem>
-		</ListBox>
-		<!-- prettier-ignore -->
-		<footer class="modal-footer {parent.regionFooter}">
-        <button class="btn {parent.buttonNeutral}" on:click={parent.onClose}>{parent.buttonTextCancel}</button>
-        <button class="btn {parent.buttonPositive}" on:click={onFormSubmit}>Select Flavors</button>
-    </footer>
-	</div>
+    <div class="modal-example-form {cBase}">
+        <header class={cHeader}>Create VM</header>
+        <article>Select VM options</article>
+        <form form="modal-form">
+            <!-- OS Selection -->
+            <section class={cFormSection}>
+
+                <!-- Flavor selection -->
+                <h4 class="h4">OS Flavor</h4>
+                <RadioGroup active="variant-ghost-primary">
+                    {#each Object.entries(os_flavors) as [name, flavor]}
+                        <RadioItem bind:group={os_flavor} value={name}>{flavor.displayName}</RadioItem>
+                    {/each}
+                </RadioGroup>
+
+                <!-- Template selection -->
+                <h4 class="h4">OS Template</h4>
+                {#if os_flavors[os_flavor].templates.length }
+                    <ListBox active="variant-ghost-primary">
+                    {#each os_flavors[os_flavor].templates as templ}
+                        <ListBoxItem bind:group={os_template} value={templ.templateName}>{templ.displayName}</ListBoxItem>
+                    {/each}
+                    </ListBox>
+                {:else}
+                    <p>No templates available for this OS flavor yet :(</p>
+                {/if}
+            </section>
+
+            <!-- Networking selection -->
+            <section class="mt-5 {cFormSection}">
+                <h4 class="h4">Networking Information</h4>
+                <p>Automatically generate networking information</p>
+                <SlideToggle active="bg-primary-500" bind:checked={automatic_networking} />
+
+                <label class="label">
+                    <span>IP address</span>
+                    <input bind:value={ip} disabled={automatic_networking} class="input pl-4 p-1" type="text" placeholder="192.168.1.1/24">
+                </label>
+                <label class="label">
+                    <span>Default Gateway</span>
+                    <input bind:value={gateway} disabled={automatic_networking} class="input pl-4 p-1" type="text" placeholder="192.168.1.1/24">
+                </label>
+
+            </section>
+        </form>
+
+        <footer class="modal-footer {parent.regionFooter}">
+            <button class="btn {parent.buttonNeutral}" on:click={parent.onClose}>{parent.buttonTextCancel}</button>
+            <button class="btn {parent.buttonPositive}" on:click={onFormSubmit}>Create</button>
+        </footer>
+    </div>
 {/if}

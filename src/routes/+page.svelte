@@ -6,17 +6,10 @@
 
     let vms = [];
     function add_vm() {
-        create_vm();
-        return;
-        const modalComponent = {
-            ref: CreateVMMenu,
-            //props: { background: 'bg-red-500' },
-            //slot: '<p>Skeleton</p>'
-        };
-
+        const c = { ref: CreateVMMenu };
         const modal = {
             type: 'component',
-            compenent: modalComponent,
+            component: c,
         };
 
         modalStore.trigger(modal);
