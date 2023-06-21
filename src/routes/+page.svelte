@@ -6,7 +6,14 @@
 
     let vms = [];
     function add_vm() {
-        const c = { ref: CreateVMMenu };
+        const c = {
+            ref: CreateVMMenu,
+            props: {
+                onSubmit: createVM,
+                vmid: vms.length, // race condition?
+            },
+        };
+
         const modal = {
             type: 'component',
             component: c,
@@ -15,15 +22,16 @@
         modalStore.trigger(modal);
     }
 
-    function create_vm() {
-        vms[vms.length] = vms.length + 1;
+    function createVM(name) {
+        vms[vms.length] = name;
+        console.log(vms);
     }
 </script>
 
 <div class="container mx-auto p-8 space-y-8">
     <h1 class="h1">Machines</h1>
     {#each vms as v, i}
-        <VMCard vmid={i + 1} />
+        <VMCard vmname={v} vmid={i + 1} />
     {/each}
     <button on:click={add_vm} type="button" class="vm-add-btn btn variant-ghost p-4 m-2">
         Add VM

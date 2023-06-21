@@ -2,6 +2,9 @@
     // Props
     /** Exposes parent props to this component. */
     export let parent: any;
+    export let onSubmit;
+    export let vmid: int;
+
     import { modalStore, RadioGroup, RadioItem, ListBox, ListBoxItem, SlideToggle, Accordion, AccordionItem } from '@skeletonlabs/skeleton';
 
     const formData = {};
@@ -10,6 +13,7 @@
     function onFormSubmit(): void {
             if ($modalStore[0].response) $modalStore[0].response(formData);
             modalStore.close();
+            onSubmit(vm_name);
     }
 
     // Base Classes
@@ -17,6 +21,8 @@
     const cHeader = 'text-2xl font-bold';
     const cFormSection = 'border border-surface-500 p-4 space-y-4 rounded-container-token';
 
+    // Information
+    let vm_name = 'VM-' + vmid; // make this vmid by default
 
     // OS flavors
     const os_flavors = {
@@ -52,7 +58,8 @@
 
     let automatic_networking = true;
     let ip = '127.0.0.1/8';
-    let gateway = '127.0.0.1/8';
+    let dns_server = '127.0.0.1';
+    let gateway = '127.0.0.1';
 </script>
 
 <!-- @component This example creates a simple form modal. -->
@@ -63,8 +70,22 @@
         <article>Select VM options</article>
         <form form="modal-form">
             <Accordion>
-                <!-- OS Selection -->
+                <!-- General information -->
                 <AccordionItem open autocollapse>
+                    <svelte:fragment slot="lead">📕</svelte:fragment>
+                    <svelte:fragment slot="summary">General</svelte:fragment>
+                    <svelte:fragment slot="content">
+                        <section class="mt-5 {cFormSection}">
+                            <label class="label">
+                                <span>Virtual Machine Name</span>
+                                <input bind:value={vm_name} class="input pl-4 p-1" type="text" placeholder="a-really-awesome-name">
+                            </label>
+                        </section>
+                    </svelte:fragment>
+                </AccordionItem>
+
+                <!-- OS Selection -->
+                <AccordionItem autocollapse>
                     <svelte:fragment slot="lead">🖥️</svelte:fragment>
                     <svelte:fragment slot="summary">Operating System</svelte:fragment>
                     <svelte:fragment slot="content">
@@ -110,14 +131,27 @@
                             </label>
                             <label class="label">
                                 <span>Default Gateway</span>
-                                <input bind:value={gateway} disabled={automatic_networking} class="input pl-4 p-1" type="text" placeholder="192.168.1.1/24">
+                                <input bind:value={gateway} disabled={automatic_networking} class="input pl-4 p-1" type="text" placeholder="192.168.1.1">
+                            </label>
+                            <label class="label">
+                                <span>DNS Server</span>
+                                <input bind:value={dns_server} disabled={automatic_networking} class="input pl-4 p-1" type="text" placeholder="192.168.1.1">
                             </label>
 
                         </section>
                     </svelte:fragment>
                 </AccordionItem>
 
-
+                <!-- Serivces selection -->
+                <AccordionItem autocollapse>
+                    <svelte:fragment slot="lead">🚀</svelte:fragment>
+                    <svelte:fragment slot="summary">Services</svelte:fragment>
+                    <svelte:fragment slot="content">
+                        <section class="mt-5 {cFormSection}">
+                            <h4 class="h4">Services</h4>
+                        </section>
+                    </svelte:fragment>
+                </AccordionItem>
             </Accordion>
         </form>
 
