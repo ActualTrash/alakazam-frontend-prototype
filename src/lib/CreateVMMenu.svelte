@@ -2,7 +2,7 @@
     // Props
     /** Exposes parent props to this component. */
     export let parent: any;
-    import { modalStore, RadioGroup, RadioItem, ListBox, ListBoxItem, SlideToggle } from '@skeletonlabs/skeleton';
+    import { modalStore, RadioGroup, RadioItem, ListBox, ListBoxItem, SlideToggle, Accordion, AccordionItem } from '@skeletonlabs/skeleton';
 
     const formData = {};
 
@@ -62,46 +62,63 @@
         <header class={cHeader}>Create VM</header>
         <article>Select VM options</article>
         <form form="modal-form">
-            <!-- OS Selection -->
-            <section class={cFormSection}>
+            <Accordion>
+                <!-- OS Selection -->
+                <AccordionItem open autocollapse>
+                    <svelte:fragment slot="lead">🖥️</svelte:fragment>
+                    <svelte:fragment slot="summary">Operating System</svelte:fragment>
+                    <svelte:fragment slot="content">
+                        <section class={cFormSection}>
 
-                <!-- Flavor selection -->
-                <h4 class="h4">OS Flavor</h4>
-                <RadioGroup active="variant-ghost-primary">
-                    {#each Object.entries(os_flavors) as [name, flavor]}
-                        <RadioItem bind:group={os_flavor} value={name}>{flavor.displayName}</RadioItem>
-                    {/each}
-                </RadioGroup>
+                            <!-- Flavor selection -->
+                            <h4 class="h4">OS Flavor</h4>
+                            <RadioGroup active="variant-ghost-primary">
+                                {#each Object.entries(os_flavors) as [name, flavor]}
+                                    <RadioItem bind:group={os_flavor} value={name}>{flavor.displayName}</RadioItem>
+                                {/each}
+                            </RadioGroup>
 
-                <!-- Template selection -->
-                <h4 class="h4">OS Template</h4>
-                {#if os_flavors[os_flavor].templates.length }
-                    <ListBox active="variant-ghost-primary">
-                    {#each os_flavors[os_flavor].templates as templ}
-                        <ListBoxItem bind:group={os_template} value={templ.templateName}>{templ.displayName}</ListBoxItem>
-                    {/each}
-                    </ListBox>
-                {:else}
-                    <p>No templates available for this OS flavor yet :(</p>
-                {/if}
-            </section>
+                            <!-- Template selection -->
+                            <h4 class="h4">OS Template</h4>
+                            {#if os_flavors[os_flavor].templates.length }
+                                <ListBox active="variant-ghost-primary">
+                                    {#each os_flavors[os_flavor].templates as templ}
+                                        <ListBoxItem bind:group={os_template} value={templ.templateName}>{templ.displayName}</ListBoxItem>
+                                    {/each}
+                                </ListBox>
+                            {:else}
+                                <p>No templates available for this OS flavor yet :(</p>
+                            {/if}
+                        </section>
+                    </svelte:fragment>
+                </AccordionItem>
 
-            <!-- Networking selection -->
-            <section class="mt-5 {cFormSection}">
-                <h4 class="h4">Networking Information</h4>
-                <p>Automatically generate networking information</p>
-                <SlideToggle active="bg-primary-500" bind:checked={automatic_networking} />
 
-                <label class="label">
-                    <span>IP address</span>
-                    <input bind:value={ip} disabled={automatic_networking} class="input pl-4 p-1" type="text" placeholder="192.168.1.1/24">
-                </label>
-                <label class="label">
-                    <span>Default Gateway</span>
-                    <input bind:value={gateway} disabled={automatic_networking} class="input pl-4 p-1" type="text" placeholder="192.168.1.1/24">
-                </label>
+                <!-- Networking selection -->
+                <AccordionItem autocollapse>
+                    <svelte:fragment slot="lead">🌐</svelte:fragment>
+                    <svelte:fragment slot="summary">Networking</svelte:fragment>
+                    <svelte:fragment slot="content">
+                        <section class="mt-5 {cFormSection}">
+                            <h4 class="h4">Networking Information</h4>
+                            <p>Automatically generate networking information</p>
+                            <SlideToggle active="bg-primary-500" bind:checked={automatic_networking} />
 
-            </section>
+                            <label class="label">
+                                <span>IP address</span>
+                                <input bind:value={ip} disabled={automatic_networking} class="input pl-4 p-1" type="text" placeholder="192.168.1.1/24">
+                            </label>
+                            <label class="label">
+                                <span>Default Gateway</span>
+                                <input bind:value={gateway} disabled={automatic_networking} class="input pl-4 p-1" type="text" placeholder="192.168.1.1/24">
+                            </label>
+
+                        </section>
+                    </svelte:fragment>
+                </AccordionItem>
+
+
+            </Accordion>
         </form>
 
         <footer class="modal-footer {parent.regionFooter}">
