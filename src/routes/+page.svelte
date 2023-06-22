@@ -22,25 +22,26 @@
         modalStore.trigger(modal);
     }
 
-    function createVM(name) {
-        vms[vms.length] = name;
+    function createVM(vm_data) {
+        vms[vms.length] = vm_data;
         console.log(vms);
     }
 </script>
 
 <div class="container mx-auto p-8 space-y-8">
     <h1 class="h1">Machines</h1>
+    <div class="flex">
     {#each vms as v, i}
-        <VMCard vmname={v} vmid={i + 1} />
+        <VMCard vm_data={v} vmid={i + 1} />
     {/each}
     <button on:click={add_vm} type="button" class="vm-add-btn btn variant-ghost p-4 m-2">
         Add VM
     </button>
+    </div>
 </div>
 
 <style>
     .vm-add-btn {
-        display: inline-flex;
         min-width: 12em;
         min-height: 12em;
         align-items: start;
