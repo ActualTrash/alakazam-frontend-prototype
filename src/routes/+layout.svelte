@@ -5,9 +5,11 @@
     import '@skeletonlabs/skeleton/styles/skeleton.css';
     // Most of your app wide CSS should be put in this file
     import '../app.postcss';
-    import { AppShell, AppBar, LightSwitch, Modal } from '@skeletonlabs/skeleton';
+    import { AppShell, AppBar, LightSwitch, Modal, storePopup } from '@skeletonlabs/skeleton';
     import CreateVMMenu from '../lib/CreateVMMenu.svelte';
+    import { computePosition, autoUpdate, offset, shift, flip, arrow } from '@floating-ui/dom';
 
+    storePopup.set({ computePosition, autoUpdate, offset, shift, flip, arrow });
 </script>
 
 <Modal />

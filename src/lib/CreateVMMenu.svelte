@@ -5,14 +5,17 @@
     export let onSubmit;
     export let vmid: int;
 
+    // pass in data and have the sub variables be updated
+    // changes to sub-vars should update vm_data
+
     import { modalStore, RadioGroup, RadioItem, ListBox, ListBoxItem, SlideToggle, Accordion, AccordionItem, InputChip, Autocomplete } from '@skeletonlabs/skeleton';
     import type { AutocompleteOption } from '@skeletonlabs/skeleton';
 
     // Figure out how to actually import this properly
     let service_icons = {
-        'mysql': 'linux.png',
-        'postgresql': 'linux.png',
-        'kubernetes': 'windows.png',
+        'mysql': 'mysql.png',
+        'postgresql': 'postgres.png', // https://wiki.postgresql.org/wiki/Logo
+        'kubernetes': 'kubernetes.png', // https://github.com/kubernetes/kubernetes/blob/master/logo
     };
 
     const formData = {};
@@ -23,14 +26,7 @@
             if ($modalStore[0].response) $modalStore[0].response(formData);
             modalStore.close();
 
-            const vm_data = {
-                'name': vm_name,
-                'os': os_template,
-                'network': network_data,
-                'services': selected_services,
-            };
-
-            onSubmit(vm_data);
+            onSubmit(vm_data_new);
     }
 
     // Base Classes
@@ -72,11 +68,10 @@
     };
 
     let os_flavor = Object.entries(os_flavors)[0][0]; // Get key of first entry in the object
-    $: os_template = os_flavors[os_flavor].templates.length ? os_flavors[os_flavor].templates[0].templateName : undefined;
+    $: os_template = os_flavors[os_flavor].templates.length ? os_flavors[os_flavor].templates[0].templateName : null;
 
     // Networking
     let automatic_networking = true;
-
     let network_data = {
         'ip': '127.0.0.1/8',
         'dns_server': '127.0.0.1',
@@ -86,18 +81,23 @@
 
     // Services
     let selected_services = [];
-
     const available_services: AutocompleteOption[] = [
             { label: 'MySQL', value: 'mysql', keywords: 'db, database', meta: { icon: 'database' } },
             { label: 'PostgreSQL', value: 'postgresql', keywords: 'db, database, psql', meta: { icon: 'database' } },
             { label: 'Kubernetes', value: 'kubernetes', keywords: 'containers', meta: { icon: 'kubernetes' } },
     ];
-				
 
     let inputChip = '';
 
-    function onInputChipSelect(e: any): void {
-    }
+    $: vm_data_new = {
+        'name': vm_name,
+        'os': {
+            'flavor': os_flavor,
+            'template': os_template,
+        },
+        'network': network_data,
+        'services': selected_services,
+    };
 </script>
 
 <!-- @component This example creates a simple form modal. -->
@@ -209,7 +209,7 @@
                                     {#each selected_services as s}
                                         <AccordionItem autocollapse>
                                             <svelte:fragment slot="lead">
-                                                <img src={service_icons[s]} alt="" class="service-icon m-1 w-4" />
+                                                <img src={service_icons[s]} alt="" class="service-icon m-1 w-5" />
                                             </svelte:fragment>
                                             <svelte:fragment slot="summary">{s}</svelte:fragment>
                                             <svelte:fragment slot="content">
