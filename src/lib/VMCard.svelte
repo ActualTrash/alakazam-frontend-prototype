@@ -22,7 +22,7 @@
     }
 </script>
 
-<div class="vm card card-hover p-4 m-2">
+<div class="vm card bg-primary-hover-token card-hover p-4 m-2">
     <div class="mb-3 flex justify-between">
         <span><b>{vm_data.name}</b></span>
         <img src={vm_data.os.flavor == 'linux' ? "linux.png" : "windows.png"} alt="" class="w-8 os-icon [&>*]:pointer-events-none" use:popup={popupHover}/>

@@ -98,6 +98,14 @@
         'network': network_data,
         'services': selected_services,
     };
+
+    function removeService(service) {
+        var index = selected_services.indexOf(service);
+        if ( index > -1 ) {
+            selected_services.splice(index, 1);
+            selected_services = selected_services; // To tell Svelte to update the DOM
+        }
+    }
 </script>
 
 <!-- @component This example creates a simple form modal. -->
@@ -193,7 +201,8 @@
                     <svelte:fragment slot="content">
                         <section class="mt-5 {cFormSection}">
                             <h4 class="h4">Available Services</h4>
-                            <InputChip bind:input={inputChip} whitelist="{available_services.map(a => a.value)}" bind:value={selected_services} name="chips" />
+                            <!-- <InputChip bind:input={inputChip} whitelist="{available_services.map(a => a.value)}" bind:value={selected_services} name="chips" /> -->
+                            <input class="input pl-5 p-2" type="search" name="service-search" bind:value={inputChip} placeholder="Search..." />
                             <div class="card w-full max-h-48 p-4 overflow-y-auto" tabindex="-1">
                                     <Autocomplete
                                             bind:input={inputChip}
@@ -213,7 +222,8 @@
                                             </svelte:fragment>
                                             <svelte:fragment slot="summary">{s}</svelte:fragment>
                                             <svelte:fragment slot="content">
-                                                Configuration stuff for {s} goes here
+                                                <p>Configuration stuff for {s} goes here</p>
+                                                <button on:click={removeService(s)} class="btn bg-error-500"><i class="fa-solid fa-trash mr-2"></i>Remove Service</button>
                                             </svelte:fragment>
                                         </AccordionItem>
                                     {/each}
