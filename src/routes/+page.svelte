@@ -1,6 +1,6 @@
 <script>
     import VMCard from '../lib/VMCard.svelte';
-    import CreateVMMenu from '../lib/CreateVMMenu.svelte';
+    import CreateVMMenu from '../lib/vm_menu/CreateVMMenu.svelte';
 
     import { Modal, modalStore } from '@skeletonlabs/skeleton';
 
