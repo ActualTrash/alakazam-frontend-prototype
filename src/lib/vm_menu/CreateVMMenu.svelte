@@ -12,6 +12,7 @@
     import ServiceSelector from './ServiceSelector.svelte';
     import OperatingSystemSelector from './OperatingSystemSelector.svelte';
     import NetworkingSelector from './NetworkingSelector.svelte';
+    import { fade } from 'svelte/transition';
 
 
     const formData = {};
@@ -91,7 +92,7 @@
                     <svelte:fragment slot="lead">🖥️</svelte:fragment>
                     <svelte:fragment slot="summary">Operating System</svelte:fragment>
                     <svelte:fragment slot="content">
-                        <section class={cFormSection}>
+                        <section class={cFormSection} >
                             <OperatingSystemSelector bind:os_flavor={os_flavor} bind:os_template={os_template}/>
                         </section>
                     </svelte:fragment>

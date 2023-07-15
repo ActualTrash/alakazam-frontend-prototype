@@ -4,6 +4,7 @@
 
     // OS flavors
     import { RadioGroup, RadioItem, ListBox, ListBoxItem, SlideToggle, Accordion, AccordionItem, InputChip, Autocomplete } from '@skeletonlabs/skeleton';
+    import { fade, slide, scale } from 'svelte/transition';
     const os_flavors = {
         'linux': {
             displayName: 'Linux',
@@ -48,9 +49,11 @@
 <!-- Template selection -->
 <h4 class="h4">OS Template</h4>
 {#if os_flavors[os_flavor].templates.length }
-    <ListBox active="variant-ghost-primary">
+    <ListBox active="variant-ghost-primary" >
         {#each os_flavors[os_flavor].templates as templ}
-            <ListBoxItem bind:group={os_template} name= "template_selector" value={templ.templateName}>{templ.displayName}</ListBoxItem>
+            <div transition:slide={{ duration: 100 }}> <!-- This is kind of buggy. Especially when opening the accordian and switching to a flavor with no templates available yet -->
+                <ListBoxItem bind:group={os_template} name= "template_selector" value={templ.templateName}>{templ.displayName}</ListBoxItem>
+            </div>
         {/each}
     </ListBox>
 {:else}
